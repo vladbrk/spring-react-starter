@@ -1,0 +1,5 @@
+.idea
+**/build/**
+./web/src/main/react/build
+./web/src/main/react/node_modules
+./web/src/main/resources/build

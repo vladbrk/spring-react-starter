@@ -1,0 +1,6 @@
+rootProject.name = 'spring-react-starter'
+include 'web'
+include 'back'
+include 'security'
+include 'core'
+

@@ -1,0 +1,114 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version('2.2.4.RELEASE')
+    id 'io.spring.dependency-management'
+}
+
+group 'org.spring-react-starter'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 13
+
+repositories {
+    mavenCentral()
+}
+
+springBoot {
+    mainClassName = 'org.springsandbox.web.Application'
+}
+
+bootRun {
+    doFirst {
+        classpath += files("$projectDir/web/build/classes/java/main")
+        classpath += files("$projectDir/web/build/resources/main")
+        classpath += files("$projectDir/core/build/classes/java/main")
+        classpath += files("$projectDir/back/build/classes/java/main")
+        classpath += files("$projectDir/security/build/classes/java/main")
+    }
+}
+
+task bootRunDebug {
+    dependsOn bootRun
+    bootRun {
+        debug = true
+    }
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-jdbc')
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+//    implementation('org.springframework.boot:spring-boot-starter-security')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    //implementation('org.springframework.boot:spring-boot-devtools')
+
+
+    implementation('org.postgresql:postgresql:42.2.10')
+    implementation('org.projectlombok:lombok:1.18.12')
+    annotationProcessor('org.projectlombok:lombok:1.18.12')
+    implementation project(':core')
+    implementation project(':back')
+    implementation project(':security')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+
+
+task buildUi(type: Exec) {
+    workingDir "$projectDir/src/main/react/web-ui"
+    commandLine 'npm', 'run', 'build'
+}
+
+task deleteUiBuildDir(type: Delete) {
+    delete "$projectDir/src/main/resources/build"
+}
+
+task copyUi(type: Copy) {
+    from "$projectDir/src/main/react/web-ui/build"
+    into "$projectDir/src/main/resources/build"
+}
+
+task buildUiProd {
+    dependsOn buildUi, deleteUiBuildDir, copyUi
+    deleteUiBuildDir.mustRunAfter buildUi
+    copyUi.mustRunAfter deleteUiBuildDir
+}
+
+task startUiDevServer(type: Exec) {
+    workingDir "$projectDir/src/main/react/web-ui"
+    commandLine 'npm', 'run', 'start'
+}
+
+/**
+ * Run Front + Back in terminal using Spring boot server in debug mode 5005 port
+ */
+task runLocal {
+    dependsOn clean, buildUiProd, bootRunDebug
+    buildUiProd.mustRunAfter clean
+    bootRunDebug.mustRunAfter buildUiProd
+}
+
+/**
+ * Run Back in terminal using Spring boot server
+ */
+task runDevBack {
+    dependsOn clean, bootRun
+    bootRun.mustRunAfter clean
+}
+
+/**
+ * Run Front in terminal using Webpack Dev Server
+ */
+task runDevFront {
+    dependsOn startUiDevServer
+}
+
+/**
+ * Build jar for prod
+ */
+task buildProd {
+    dependsOn clean, buildUiProd, bootJar
+    buildUiProd.mustRunAfter clean
+    bootJar.mustRunAfter buildUiProd
+}

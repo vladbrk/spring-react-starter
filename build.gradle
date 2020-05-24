@@ -1,0 +1,82 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.liquibase:liquibase-gradle-plugin:2.0.2"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'io.spring.dependency-management' version('1.0.7.RELEASE')
+    id "org.liquibase.gradle" version "2.0.2"
+}
+
+
+
+group 'org.spring-react-starter'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 13
+
+repositories {
+    mavenCentral()
+}
+
+
+
+subprojects {
+    afterEvaluate {
+        compileJava {
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath,
+                ]
+                //classpath = files()
+            }
+        }
+    }
+}
+
+project.ext.set('dbUrl', 'jdbc:postgresql://localhost:5432/postgres')
+project.ext.set('dbUsername', 'vladislavbiryukov')
+project.ext.set('dbPassword', '')
+
+liquibase {
+    activities {
+        main {
+            changeLogFile 'db/main/db.changelog-master.xml'
+            url project.ext.dbUrl
+            username project.ext.dbUsername
+            password project.ext.dbPassword
+        }
+        security {
+            changeLogFile 'db/security/db.changelog-master.xml'
+            url project.ext.dbUrl
+            username project.ext.dbUsername
+            password project.ext.dbPassword
+        }
+//        diffMain {
+//            changeLogFile 'src/main/db/main.groovy'
+//            url project.ext.mainUrl
+//            username project.ext.mainUsername
+//            password project.ext.mainPassword
+//            difftypes 'data'
+//        }
+    }
+    //runList = project.ext.runList
+    runList = 'main,security'
+}
+
+dependencies {
+    liquibaseRuntime 'org.liquibase:liquibase-core:3.8.1'
+    //liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.0.1'
+    liquibaseRuntime 'org.postgresql:postgresql:42.2.12'
+    liquibaseRuntime "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    liquibaseRuntime "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+}
+
+

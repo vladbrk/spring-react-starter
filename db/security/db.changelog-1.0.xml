@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="biryukov" id="20200521-init-security">
+        <comment></comment>
+        <sql>
+            CREATE SCHEMA security;
+
+            CREATE TABLE security.user (
+                id BIGSERIAL PRIMARY KEY,
+                username VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL
+            );
+
+            CREATE TABLE security.role (
+                id BIGSERIAL PRIMARY KEY,
+                role SMALLINT,
+                user_id BIGINT,
+                FOREIGN KEY (user_id) REFERENCES security.user(id)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet author="biryukov" id="20200521-add-users">
+        <comment></comment>
+        <sql>
+            INSERT INTO security.user(id, username, password)
+            VALUES (0, 'admin', '$2a$10$vzQSTYfZ7/41ksvTBbU.henBt74FiZ37KLO3Gk21Z0k1RmCvL0wja'),
+            (1, 'user', '$2a$10$ayFQQLaw6MMB.k4uo8krhuU1pusMPUuSVN4TzomtVMkwrOyDRnFEO');
+
+            INSERT INTO security.role(id, role, user_id)
+            VALUES (0, 0, 0), (1, 1, 1)
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
+

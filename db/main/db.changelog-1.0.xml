@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="biryukov" id="20200525-init-contract">
+        <comment></comment>
+        <sql>
+            create schema contract;
+
+            create table contract.contract (
+                id BIGSERIAL PRIMARY KEY,
+                title VARCHAR(255),
+                start_date TIMESTAMP,
+                closure_date TIMESTAMP,
+                cost BIGINT
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet author="biryukov" id="20200525-add-contract">
+        <comment></comment>
+        <sql>
+            INSERT INTO contract.contract(id, title, start_date, closure_date, cost)
+            VALUES(0, 'Поставка оборудования', '2020-02-25 19:00:00', null, 1000000),
+            (1, 'Поддержка программного комплекса', '2019-05-10 10:00:00', '2020-12-10 18:00:00', 1500000);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
+
