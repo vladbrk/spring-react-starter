@@ -1,5 +1,6 @@
 .idea
 **/build/**
-./web/src/main/react/build
-./web/src/main/react/node_modules
-./web/src/main/resources/build
+/web/src/main/react/web-ui/build/
+/web/src/main/react/web-ui/node_modules/**
+/web/src/main/react/web-ui/node_modules/
+/web/src/main/resources/build/
