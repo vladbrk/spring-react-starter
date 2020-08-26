@@ -6,7 +6,7 @@ plugins {
 group 'org.spring-react-starter'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 13
+sourceCompatibility = 14
 
 repositories {
     mavenCentral()
